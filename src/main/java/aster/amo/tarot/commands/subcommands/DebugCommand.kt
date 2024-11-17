@@ -1,10 +1,10 @@
-package soul.software.$mod_id$.commands.subcommands
+package soul.software.tarot.commands.subcommands
 
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
-import soul.software.$mod_id$.$mod_name$
-import soul.software.$mod_id$.config.ConfigManager
-import soul.software.$mod_id$.utils.SubCommand
+import aster.amo.tarot.Tarot
+import soul.software.tarot.config.ConfigManager
+import soul.software.tarot.utils.SubCommand
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -14,7 +14,7 @@ import net.minecraft.commands.Commands
 class DebugCommand : SubCommand {
     override fun build(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("debug")
-            .requires(Permissions.require("${$mod_name$.MOD_ID}.command.debug", 2))
+            .requires(Permissions.require("${Tarot.MOD_ID}.command.debug", 2))
             .executes(Companion::debug)
             .build()
     }

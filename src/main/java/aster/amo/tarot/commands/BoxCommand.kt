@@ -1,27 +1,27 @@
-package soul.software.$mod_id$.commands
+package soul.software.tarot.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.tree.LiteralCommandNode
-import soul.software.$mod_id$.$mod_name$
-import soul.software.skiestemplatemod.commands.subcommands.DebugCommand
-import soul.software.skiestemplatemod.commands.subcommands.ReloadCommand
+import aster.amo.tarot.Tarot
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
+import soul.software.tarot.commands.subcommands.BoxReleaseCommand
+import soul.software.tarot.commands.subcommands.BoxSwapCommand
 
-class BaseCommand {
-    private val aliases = listOf("skiestemplatemod")
+class BoxCommand {
+    private val aliases = listOf("box")
 
     fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
         val rootCommands: List<LiteralCommandNode<CommandSourceStack>> = aliases.map {
             Commands.literal(it)
-                .requires(Permissions.require("${$mod_name$.MOD_ID}.command.base", 2))
+                .requires(Permissions.require("${Tarot.MOD_ID}.command.box", 2))
                 .build()
         }
 
         val subCommands: List<LiteralCommandNode<CommandSourceStack>> = listOf(
-            ReloadCommand().build(),
-            DebugCommand().build(),
+            BoxReleaseCommand().build(),
+            BoxSwapCommand().build(),
         )
 
         rootCommands.forEach { root ->

@@ -1,10 +1,10 @@
-package soul.software.$mod_id$.utils
+package soul.software.tarot.utils
 
 import com.google.gson.*
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
-import soul.software.$mod_id$.$mod_name$
-import soul.software.$mod_id$.config.ConfigManager
+import aster.amo.tarot.Tarot
+import soul.software.tarot.config.ConfigManager
 import net.minecraft.core.Holder
 import net.minecraft.core.Registry
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
@@ -18,15 +18,15 @@ object Utils {
     // Useful logging functions
     fun printDebug(message: String, bypassCheck: Boolean = false) {
         if (bypassCheck || ConfigManager.CONFIG.debug)
-            $mod_name$.LOGGER.info("[${$mod_name$.MOD_NAME}] DEBUG: $message")
+            Tarot.LOGGER.info("[${Tarot.MOD_NAME}] DEBUG: $message")
     }
 
     fun printError(message: String) {
-        $mod_name$.LOGGER.error("[${$mod_name$.MOD_NAME}] ERROR: $message")
+        Tarot.LOGGER.error("[${Tarot.MOD_NAME}] ERROR: $message")
     }
 
     fun printInfo(message: String) {
-        $mod_name$.LOGGER.info("[${$mod_name$.MOD_NAME}] $message")
+        Tarot.LOGGER.info("[${Tarot.MOD_NAME}] $message")
     }
 
 
@@ -89,7 +89,7 @@ object Utils {
         @Throws(JsonParseException::class)
         override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): T? {
             return try {
-                codec.decode(JsonOps.INSTANCE, json).getOrThrow(false) { }.first
+                codec.decode(JsonOps.INSTANCE, json).getOrThrow() { return@getOrThrow Exception() }.first
             } catch (e: Throwable) {
                 printError("There was an error while deserializing a Codec: $codec")
                 null
@@ -99,7 +99,7 @@ object Utils {
         override fun serialize(src: T?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
             return try {
                 if (src != null)
-                    codec.encodeStart(JsonOps.INSTANCE, src).getOrThrow(false) { }
+                    codec.encodeStart(JsonOps.INSTANCE, src).getOrThrow() { return@getOrThrow Exception() }
                 else
                     JsonNull.INSTANCE
             } catch (e: Throwable) {

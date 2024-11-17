@@ -1,4 +1,4 @@
-package soul.software.$mod_id
+package aster.amo.tarot
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -12,21 +12,24 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import soul.software.tarot.commands.BaseCommand
+import soul.software.tarot.commands.BoxCommand
+import soul.software.tarot.config.ConfigManager
 import java.io.File
 
-class $mod_name$ : ModInitializer {
+class Tarot : ModInitializer {
     companion object {
-        lateinit var INSTANCE: $mod_name$
+        lateinit var INSTANCE: Tarot
 
-        var MOD_ID = "$mod_id$"
-        var MOD_NAME = "$mod_name$"
+        var MOD_ID = "tarot"
+        var MOD_NAME = "Tarot"
 
         val LOGGER: Logger = LogManager.getLogger(MOD_ID)
         val MINI_MESSAGE: MiniMessage = MiniMessage.miniMessage()
 
         @JvmStatic
         fun asResource(path: String): ResourceLocation {
-            return ResourceLocation(MOD_ID, path)
+            return ResourceLocation.fromNamespaceAndPath(MOD_ID, path)
         }
     }
 
@@ -48,7 +51,7 @@ class $mod_name$ : ModInitializer {
     }
 
     private fun registerEvents() {
-        ServerLifecycleEvents.SERVER_STARTING.register(ServerStarting { server: MinecraftServer? ->
+        ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvents.ServerStarting { server: MinecraftServer? ->
             this.adventure = FabricServerAudiences.of(
                 server!!
             )
@@ -56,6 +59,9 @@ class $mod_name$ : ModInitializer {
         })
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
             BaseCommand().register(
+                dispatcher
+            )
+            BoxCommand().register(
                 dispatcher
             )
         }

@@ -1,8 +1,8 @@
-package soul.software.$mod_id$.config
+package soul.software.tarot.config
 
 import com.google.gson.stream.JsonReader
-import soul.software.$mod_id$.$mod_name$
-import soul.software.$mod_id$.utils.Utils
+import aster.amo.tarot.Tarot
+import soul.software.tarot.utils.Utils
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -12,40 +12,40 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 object ConfigManager {
-    private var assetPackage = "assets/${$mod_name$.MOD_ID}"
+    private var assetPackage = "assets/${Tarot.MOD_ID}"
 
-    lateinit var CONFIG: $mod_name$Config
+    lateinit var CONFIG: TarotConfig
 
     fun load() {
         // Load defaulted configs if they do not exist
         copyDefaults()
 
         // Load all files
-        CONFIG = loadFile("config.json", $mod_name$Config())
+        CONFIG = loadFile("config.json", TarotConfig())
     }
 
     private fun copyDefaults() {
-        val classLoader = $mod_name$::class.java.classLoader
+        val classLoader = Tarot::class.java.classLoader
 
-        $mod_name$.INSTANCE.configDir.mkdirs()
+        Tarot.INSTANCE.configDir.mkdirs()
 
         attemptDefaultFileCopy(classLoader, "config.json")
     }
 
     fun <T : Any> loadFile(filename: String, default: T, create: Boolean = false): T {
-        val file = File($mod_name$.INSTANCE.configDir, filename)
+        val file = File(Tarot.INSTANCE.configDir, filename)
         var value: T = default
         try {
-            Files.createDirectories($mod_name$.INSTANCE.configDir.toPath())
+            Files.createDirectories(Tarot.INSTANCE.configDir.toPath())
             if (file.exists()) {
                 FileReader(file).use { reader ->
                     val jsonReader = JsonReader(reader)
-                    value = $mod_name$.INSTANCE.gsonPretty.fromJson(jsonReader, default::class.java)
+                    value = Tarot.INSTANCE.gsonPretty.fromJson(jsonReader, default::class.java)
                 }
             } else if (create) {
                 Files.createFile(file.toPath())
                 FileWriter(file).use { fileWriter ->
-                    fileWriter.write($mod_name$.INSTANCE.gsonPretty.toJson(default))
+                    fileWriter.write(Tarot.INSTANCE.gsonPretty.toJson(default))
                     fileWriter.flush()
                 }
             }
@@ -56,11 +56,11 @@ object ConfigManager {
     }
 
     fun <T> saveFile(filename: String, `object`: T): Boolean {
-        val dir = $mod_name$.INSTANCE.configDir
+        val dir = Tarot.INSTANCE.configDir
         val file = File(dir, filename)
         try {
             FileWriter(file).use { fileWriter ->
-                fileWriter.write($mod_name$.INSTANCE.gsonPretty.toJson(`object`))
+                fileWriter.write(Tarot.INSTANCE.gsonPretty.toJson(`object`))
                 fileWriter.flush()
             }
         } catch (e: Exception) {
@@ -71,7 +71,7 @@ object ConfigManager {
     }
 
     private fun attemptDefaultFileCopy(classLoader: ClassLoader, fileName: String) {
-        val file = $mod_name$.INSTANCE.configDir.resolve(fileName)
+        val file = Tarot.INSTANCE.configDir.resolve(fileName)
         if (!file.exists()) {
             try {
                 val stream = classLoader.getResourceAsStream("${assetPackage}/$fileName")
@@ -85,7 +85,7 @@ object ConfigManager {
     }
 
     private fun attemptDefaultDirectoryCopy(classLoader: ClassLoader, directoryName: String) {
-        val directory = $mod_name$.INSTANCE.configDir.resolve(directoryName)
+        val directory = Tarot.INSTANCE.configDir.resolve(directoryName)
         if (!directory.exists()) {
             directory.mkdirs()
             try {

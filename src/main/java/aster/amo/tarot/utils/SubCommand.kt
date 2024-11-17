@@ -1,4 +1,4 @@
-package soul.software.$mod_id$.utils
+package soul.software.tarot.utils
 
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.minecraft.commands.CommandSourceStack

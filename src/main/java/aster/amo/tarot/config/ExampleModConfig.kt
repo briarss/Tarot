@@ -1,6 +1,6 @@
-package soul.software.$mod_id$.config
+package soul.software.tarot.config
 
-class $mod_name$Config(
+class TarotConfig(
     var debug: Boolean = false
 ) {
     override fun toString(): String {
