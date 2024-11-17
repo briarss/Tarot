@@ -1,8 +1,8 @@
-package soul.software.tarot.config
+package aster.amo.tarot.config
 
 import com.google.gson.stream.JsonReader
 import aster.amo.tarot.Tarot
-import soul.software.tarot.utils.Utils
+import aster.amo.tarot.utils.Utils
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -74,7 +74,7 @@ object ConfigManager {
         val file = Tarot.INSTANCE.configDir.resolve(fileName)
         if (!file.exists()) {
             try {
-                val stream = classLoader.getResourceAsStream("${assetPackage}/$fileName")
+                val stream = classLoader.getResourceAsStream("$assetPackage/$fileName")
                     ?: throw NullPointerException("File not found $fileName")
 
                 Files.copy(stream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
@@ -89,7 +89,7 @@ object ConfigManager {
         if (!directory.exists()) {
             directory.mkdirs()
             try {
-                val sourceUrl = classLoader.getResource("${assetPackage}/$directoryName")
+                val sourceUrl = classLoader.getResource("$assetPackage/$directoryName")
                     ?: throw NullPointerException("Directory not found $directoryName")
                 val sourcePath = Paths.get(sourceUrl.toURI())
 

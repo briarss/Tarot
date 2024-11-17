@@ -1,4 +1,4 @@
-package soul.software.tarot.config
+package aster.amo.tarot.config
 
 class TarotConfig(
     var debug: Boolean = false

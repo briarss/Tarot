@@ -1,4 +1,4 @@
-package soul.software.tarot.utils
+package aster.amo.tarot.utils
 
 import aster.amo.tarot.Tarot
 import net.minecraft.network.chat.Component

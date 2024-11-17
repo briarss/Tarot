@@ -1,4 +1,4 @@
-package soul.software.tarot.utils
+package aster.amo.tarot.utils
 
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.minecraft.commands.CommandSourceStack

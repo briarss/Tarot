@@ -1,4 +1,4 @@
-package soul.software.tarot.commands.subcommands
+package aster.amo.tarot.commands.subcommands
 
 import aster.amo.ceremony.utils.parseToNative
 import aster.amo.tarot.commands.box.BoxUtils
@@ -6,7 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import aster.amo.tarot.Tarot
-import soul.software.tarot.utils.SubCommand
+import aster.amo.tarot.utils.SubCommand
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickCallback

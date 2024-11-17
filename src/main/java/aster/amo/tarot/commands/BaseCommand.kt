@@ -1,10 +1,10 @@
-package soul.software.tarot.commands
+package aster.amo.tarot.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.tree.LiteralCommandNode
 import aster.amo.tarot.Tarot
-import soul.software.tarot.commands.subcommands.DebugCommand
-import soul.software.tarot.commands.subcommands.ReloadCommand
+import aster.amo.tarot.commands.subcommands.DebugCommand
+import aster.amo.tarot.commands.subcommands.ReloadCommand
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands

@@ -1,10 +1,10 @@
-package soul.software.tarot.commands.subcommands
+package aster.amo.tarot.commands.subcommands
 
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import aster.amo.tarot.Tarot
-import soul.software.tarot.config.ConfigManager
-import soul.software.tarot.utils.SubCommand
+import aster.amo.tarot.config.ConfigManager
+import aster.amo.tarot.utils.SubCommand
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

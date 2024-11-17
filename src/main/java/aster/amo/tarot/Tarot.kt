@@ -12,9 +12,9 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import soul.software.tarot.commands.BaseCommand
-import soul.software.tarot.commands.BoxCommand
-import soul.software.tarot.config.ConfigManager
+import aster.amo.tarot.commands.BaseCommand
+import aster.amo.tarot.commands.BoxCommand
+import aster.amo.tarot.config.ConfigManager
 import java.io.File
 
 class Tarot : ModInitializer {

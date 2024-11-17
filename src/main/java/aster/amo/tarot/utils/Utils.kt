@@ -1,10 +1,10 @@
-package soul.software.tarot.utils
+package aster.amo.tarot.utils
 
 import com.google.gson.*
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import aster.amo.tarot.Tarot
-import soul.software.tarot.config.ConfigManager
+import aster.amo.tarot.config.ConfigManager
 import net.minecraft.core.Holder
 import net.minecraft.core.Registry
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
