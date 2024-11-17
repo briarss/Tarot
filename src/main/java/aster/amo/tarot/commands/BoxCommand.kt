@@ -8,6 +8,7 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import soul.software.tarot.commands.subcommands.BoxReleaseCommand
 import soul.software.tarot.commands.subcommands.BoxSwapCommand
+import soul.software.tarot.commands.subcommands.SortBoxCommand
 
 class BoxCommand {
     private val aliases = listOf("box")
@@ -22,6 +23,7 @@ class BoxCommand {
         val subCommands: List<LiteralCommandNode<CommandSourceStack>> = listOf(
             BoxReleaseCommand().build(),
             BoxSwapCommand().build(),
+            SortBoxCommand().build()
         )
 
         rootCommands.forEach { root ->

@@ -3,10 +3,9 @@
   "id": "tarot",
   "version": "${version}",
   "name": "Tarot",
-  "description": "Template mod for SoulSoftware Fabric Server-Side mods",
+  "description": "go away",
   "authors": [
-    "AmoAster",
-    "Stampede"
+    "AmoAster"
   ],
   "entrypoints": {
     "main": [
