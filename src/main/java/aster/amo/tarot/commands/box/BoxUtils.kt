@@ -1,6 +1,7 @@
 package aster.amo.tarot.commands.box
 
 import com.cobblemon.mod.common.Cobblemon
+import com.cobblemon.mod.common.api.storage.pc.PCPosition
 import com.cobblemon.mod.common.api.types.ElementalTypes
 import com.cobblemon.mod.common.pokemon.Pokemon
 import com.cobblemon.mod.common.util.swap
@@ -17,11 +18,8 @@ object BoxUtils {
         val pc = Cobblemon.storage.getPC(player) ?: return
         pc.boxes[box].let { boxInstance ->
             val pokemonToRemove: MutableList<Pokemon> = mutableListOf()
-            for (position in 0..boxInstance.getNonEmptySlots().size) {
-                val pokemon = boxInstance.getNonEmptySlots()[position]
-                if (pokemon != null) {
-                    pokemonToRemove.add(pokemon)
-                }
+            boxInstance.forEach { pokemon ->
+                pokemonToRemove.add(pokemon)
             }
             for (pokemon in pokemonToRemove) {
                 boxInstance.pc.remove(pokemon)
@@ -37,10 +35,10 @@ object BoxUtils {
 
     fun sortBox(player: ServerPlayer, box: Int, sortType: SortType) {
         val pc = Cobblemon.storage.getPC(player) ?: return
-        val pokemon = pc.boxes[box].sortedWith(sortType.comparator)
+        val pokemon = pc.boxes[box].toMutableList().sortedWith(sortType.comparator)
         releaseBox(player, box)
         for (i in pokemon.indices) {
-            pc.boxes[box][i] = pokemon[i]
+            pc.set(PCPosition(box, i), pokemon[i])
         }
         pc.sendTo(player)
     }
