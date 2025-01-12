@@ -5,6 +5,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import aster.amo.tarot.Tarot
 import aster.amo.tarot.commands.subcommands.DebugCommand
 import aster.amo.tarot.commands.subcommands.ReloadCommand
+import aster.amo.tarot.commands.subcommands.ShinyCommand
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
@@ -22,6 +23,7 @@ class BaseCommand {
         val subCommands: List<LiteralCommandNode<CommandSourceStack>> = listOf(
             ReloadCommand().build(),
             DebugCommand().build(),
+            ShinyCommand().build()
         )
 
         rootCommands.forEach { root ->

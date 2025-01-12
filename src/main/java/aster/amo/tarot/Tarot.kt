@@ -1,5 +1,8 @@
 package aster.amo.tarot
 
+import aster.amo.tarot.bank.Bank
+import aster.amo.tarot.bank.BankRepository
+import aster.amo.tarot.commands.BankCommand
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -15,6 +18,12 @@ import org.apache.logging.log4j.Logger
 import aster.amo.tarot.commands.BaseCommand
 import aster.amo.tarot.commands.BoxCommand
 import aster.amo.tarot.config.ConfigManager
+import aster.amo.tarot.utils.MongoUtils
+import com.cobblemon.mod.common.util.math.geometry.toRadians
+import kotlinx.coroutines.runBlocking
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
+import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket
 import java.io.File
 
 class Tarot : ModInitializer {
@@ -34,6 +43,7 @@ class Tarot : ModInitializer {
     }
 
     lateinit var configDir: File
+    @Volatile lateinit var repository: BankRepository
 
     lateinit var adventure: FabricServerAudiences
     var server: MinecraftServer? = null
@@ -48,6 +58,13 @@ class Tarot : ModInitializer {
         ConfigManager.load()
 
         registerEvents()
+
+        val client = MongoUtils.createMongoClient(gson)
+        val repository = BankRepository(client)
+        runBlocking {
+            repository.init()
+        }
+        this.repository = repository
     }
 
     private fun registerEvents() {
@@ -64,6 +81,19 @@ class Tarot : ModInitializer {
             BoxCommand().register(
                 dispatcher
             )
+            BankCommand().register(
+                dispatcher
+            )
+        }
+
+        ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->
+            val player = handler.player
+            runBlocking {
+                INSTANCE.repository.readPlayerData(player.uuid)?.let {} ?: INSTANCE.repository.writePlayerData(
+                    player.uuid,
+                    Bank(player.uuid, mutableListOf())
+                )
+            }
         }
     }
 

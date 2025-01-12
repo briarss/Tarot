@@ -140,7 +140,7 @@ dependencies {
 
 
     modImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    include("aster.amo.ceremony:Ceremony:2.0.1")?.let {
+    include("aster.amo.ceremony:Ceremony:2.0.2")?.let {
         modImplementation(it)
     }
     include("com.github.shynixn.mccoroutine:mccoroutine-fabric-api:2.20.0")?.let {
