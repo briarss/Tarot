@@ -1,7 +1,11 @@
 package aster.amo.tarot.config
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import aster.amo.tarot.Tarot
+import aster.amo.tarot.schedulable.Schedulable
 import aster.amo.tarot.utils.Utils
 import java.io.File
 import java.io.FileReader
@@ -22,6 +26,10 @@ object ConfigManager {
 
         // Load all files
         CONFIG = loadFile("config.json", TarotConfig())
+        Schedulable.schedulables.clear()
+        Schedulable.schedulables.addAll(loadSchedulables(Tarot.INSTANCE.configDir.resolve("schedulables")))
+        // optionally load a schedulables.json file and add all schedulables in the "schedulables" array to the list
+        Schedulable.schedulables.addAll(loadSchedulablesFromJson(Tarot.INSTANCE.configDir.resolve("schedulables.json")))
     }
 
     private fun copyDefaults() {
@@ -30,6 +38,67 @@ object ConfigManager {
         Tarot.INSTANCE.configDir.mkdirs()
 
         attemptDefaultFileCopy(classLoader, "config.json")
+    }
+
+    fun loadSchedulables(directory: File): MutableList<Schedulable> {
+        val schedulables = mutableListOf<Schedulable>()
+        if (directory.exists() && directory.isDirectory) {
+            loadConfigsRecursive<Schedulable>(directory, schedulables) { file ->
+                try {
+                    var path = file.toPath()
+                    path = path.subpath(Tarot.INSTANCE.configDir.toPath().nameCount, path.nameCount)
+                    val filter = loadFile(path.toString(), Schedulable())
+                    filter
+                } catch (e: Exception) {
+                    Tarot.LOGGER.error("Error loading schedulable config from ${file.absolutePath}", e)
+                    Schedulable()
+                }
+            }
+        }
+        return schedulables
+    }
+
+    private fun loadSchedulablesFromJson(file: File): List<Schedulable> {
+        val schedulables = mutableListOf<Schedulable>()
+        if (file.exists()) {
+            try {
+                FileReader(file).use { reader ->
+                    val jsonElement = JsonParser.parseReader(reader)
+                    if (jsonElement.isJsonObject) {
+                        val jsonObject = jsonElement.asJsonObject
+                        val jsonArray: JsonArray = jsonObject.getAsJsonArray("schedulables")
+                        for (element: JsonElement in jsonArray) {
+                            val schedulable = Tarot.INSTANCE.gsonPretty.fromJson(element, Schedulable::class.java)
+                            schedulables.add(schedulable)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Tarot.LOGGER.error("Error loading schedulables from ${file.absolutePath}", e)
+            }
+        }
+        return schedulables
+    }
+
+    private fun <T> loadConfigsRecursive(directory: File, list: MutableList<T>, loadAction: (File) -> T) {
+        directory.listFiles()?.forEach { file ->
+            if (file.isFile && file.name.endsWith(".json")) {
+                list.add(loadAction(file))
+            } else if (file.isDirectory) {
+                loadConfigsRecursive(file, list, loadAction)
+            }
+        }
+    }
+
+    private fun <K, V> loadConfigsRecursive(directory: File, map: MutableMap<K, V>, loadAction: (File) -> Pair<K, V>) {
+        directory.listFiles()?.forEach { file ->
+            if (file.isFile && file.name.endsWith(".json")) {
+                val (key, value) = loadAction(file)
+                map[key] = value
+            } else if (file.isDirectory) {
+                loadConfigsRecursive(file, map, loadAction)
+            }
+        }
     }
 
     fun <T : Any> loadFile(filename: String, default: T, create: Boolean = false): T {

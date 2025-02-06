@@ -12,6 +12,7 @@ import net.minecraft.commands.Commands
 import aster.amo.tarot.commands.subcommands.BoxReleaseCommand
 import aster.amo.tarot.commands.subcommands.BoxSwapCommand
 import aster.amo.tarot.commands.subcommands.SortBoxCommand
+import aster.amo.tarot.config.ConfigManager
 import aster.amo.tarot.data.TarotDataObject
 import kotlinx.coroutines.runBlocking
 
@@ -19,6 +20,7 @@ class BankCommand {
     private val aliases = listOf("bank")
 
     fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
+        if(!ConfigManager.CONFIG.bankEnabled) return
         val rootCommands: List<LiteralCommandNode<CommandSourceStack>> = aliases.map {
             Commands.literal(it)
                 .requires(Permissions.require("${Tarot.MOD_ID}.command.box", 2))

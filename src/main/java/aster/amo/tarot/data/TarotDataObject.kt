@@ -32,7 +32,8 @@ class TarotDataObject(player: Player) : DataObject(player) {
                 val startTime = compoundTag.getLong("startTime")
                 val endTime = compoundTag.getLong("endTime")
                 val modifier = compoundTag.getDouble("modifier")
-                shinyModifiers.add(ShinyModifier(startTime, endTime, modifier))
+                val uuid = compoundTag.getUUID("uuid")
+                shinyModifiers.add(ShinyModifier(startTime, endTime, modifier, uuid))
             }
         }
     }
@@ -52,6 +53,7 @@ class TarotDataObject(player: Player) : DataObject(player) {
             tag.putLong("startTime", it.startTime)
             tag.putLong("endTime", it.endTime)
             tag.putDouble("modifier", it.modifier)
+            tag.putUUID("uuid", it.uuid)
             listTag.add(tag)
         }
         tag.put("shinyModifiers", listTag)

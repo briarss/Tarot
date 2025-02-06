@@ -1,7 +1,9 @@
 package aster.amo.tarot.utils
 
 import aster.amo.tarot.bank.BankCodec
+import aster.amo.tarot.config.ConfigManager
 import com.google.gson.Gson
+import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import org.bson.UuidRepresentation
@@ -19,6 +21,7 @@ object MongoUtils {
         )
 
         val settings = MongoClientSettings.builder()
+            .applyConnectionString(ConnectionString(ConfigManager.CONFIG.connectionString))
             .codecRegistry(customCodecRegistry)
             .uuidRepresentation(UuidRepresentation.STANDARD)
             .build()

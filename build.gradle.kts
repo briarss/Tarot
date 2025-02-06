@@ -129,18 +129,15 @@ dependencies {
     modImplementation("net.impactdev.impactor.api:economy:5.3.0-SNAPSHOT")
     modImplementation("net.impactdev.impactor.api:text:5.3.0-SNAPSHOT")
 
-    modImplementation("com.cobblemon:fabric:1.6.0+1.21.1-SNAPSHOT")
+    modImplementation("com.cobblemon:fabric:1.6.1+1.21.1-SNAPSHOT")
 
     // Database Storage
-    implementation(include("org.mongodb:mongodb-driver-sync:4.11.0")!!)
-    implementation(include("org.mongodb:mongodb-driver-core:4.11.0")!!)
-    implementation(include("org.mongodb:mongodb-driver-kotlin-coroutine:4.11.0")!!)
-    implementation(include("org.mongodb:bson:4.11.0")!!)
-    implementation(include("org.mongodb:bson-kotlinx:4.11.0")!!)
+    implementation(include("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")!!)
+    shadow("org.mongodb:mongodb-driver-kotlin-coroutine:4.10.1")
 
 
     modImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    include("aster.amo.ceremony:Ceremony:2.0.2")?.let {
+    include("aster.amo.ceremony:Ceremony:2.0.2b")?.let {
         modImplementation(it)
     }
     include("com.github.shynixn.mccoroutine:mccoroutine-fabric-api:2.20.0")?.let {
@@ -188,10 +185,30 @@ tasks.processResources {
 //    }
 }
 
-tasks.remapJar {
-    archiveFileName.set("${project.name}-fabric-$minecraftVersion-${project.version}.jar")
-}
+tasks {
+    remapJar {
+        archiveFileName.set("${project.name}-fabric-$minecraftVersion-${project.version}.jar")
+        dependsOn(shadowJar)
+        inputFile = file(shadowJar.get().archiveFile)
+    }
 
+    shadowJar {
+        from("LICENSE")
+        configurations = listOf(
+            project.configurations.shadow.get()
+        )
+        archiveClassifier.set("dev-all")
+
+        exclude("kotlin/**", "javax/**")
+        exclude("org/checkerframework/**", "org/intellij/**", "org/jetbrains/annotations/**")
+        exclude("com/google/gson/**")
+        exclude("net/kyori/**")
+        exclude("org/slf4j/**")
+
+        val relocPath = "aster.amo.libs."
+        relocate("com.mongodb", relocPath + "com.mongodb")
+    }
+}
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.release.set(21)

@@ -4,6 +4,7 @@ import aster.amo.ceremony.utils.TimeParser
 import aster.amo.ceremony.utils.extension.get
 import aster.amo.ceremony.utils.parseToNative
 import aster.amo.tarot.Tarot
+import aster.amo.tarot.config.ConfigManager
 import aster.amo.tarot.data.TarotDataObject
 import aster.amo.tarot.shiny.ShinyModifier
 import aster.amo.tarot.utils.SubCommand
@@ -35,10 +36,9 @@ class ShinyCommand : SubCommand {
 
     companion object {
         fun execute(ctx: CommandContext<CommandSourceStack>): Int {
-            val player = EntityArgument.getPlayer(ctx, "player")
+            val players = EntityArgument.getPlayers(ctx, "player")
             val boost = DoubleArgumentType.getDouble(ctx, "boost")
             val endTime = StringArgumentType.getString(ctx, "end time")
-
 
             val parsedTime = try { TimeParser.parseTime(endTime) } catch (e: IllegalArgumentException) {
                 e.message?.parseToNative()?.let { ctx.source.sendFailure(it) }
@@ -46,9 +46,15 @@ class ShinyCommand : SubCommand {
                 return 0
             }
 
-            val data = player get TarotDataObject
-            data.shinyModifiers.add(ShinyModifier(System.currentTimeMillis(), parsedTime, boost))
-            ctx.source.sendMessage("Successfully added shiny modifier to ${player.name.string}".parseToNative())
+            val modifier = ShinyModifier(System.currentTimeMillis(), parsedTime, boost)
+            players.forEach { player ->
+                val data = player get TarotDataObject
+                data.shinyModifiers.add(modifier)
+                ctx.source.sendMessage("Successfully added shiny modifier to ${player.name.string}".parseToNative())
+            }
+
+            ConfigManager.CONFIG.shinyBoosts.add(modifier)
+            ConfigManager.saveFile("config.json", ConfigManager.CONFIG)
             return 1
         }
     }

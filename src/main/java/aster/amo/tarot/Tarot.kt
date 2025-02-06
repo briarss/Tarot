@@ -1,5 +1,6 @@
 package aster.amo.tarot
 
+import aster.amo.ceremony.utils.extension.get
 import aster.amo.tarot.bank.Bank
 import aster.amo.tarot.bank.BankRepository
 import aster.amo.tarot.commands.BankCommand
@@ -17,7 +18,11 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import aster.amo.tarot.commands.BaseCommand
 import aster.amo.tarot.commands.BoxCommand
+import aster.amo.tarot.commands.registerShinyBoostCommand
 import aster.amo.tarot.config.ConfigManager
+import aster.amo.tarot.data.TarotDataObject
+import aster.amo.tarot.schedulable.Schedulable
+import aster.amo.tarot.shiny.ShinyModifier
 import aster.amo.tarot.utils.MongoUtils
 import com.cobblemon.mod.common.util.math.geometry.toRadians
 import kotlinx.coroutines.runBlocking
@@ -59,12 +64,14 @@ class Tarot : ModInitializer {
 
         registerEvents()
 
-        val client = MongoUtils.createMongoClient(gson)
-        val repository = BankRepository(client)
-        runBlocking {
-            repository.init()
+        if(ConfigManager.CONFIG.bankEnabled) {
+            val client = MongoUtils.createMongoClient(gson)
+            val repository = BankRepository(client)
+            runBlocking {
+                repository.init()
+            }
+            this.repository = repository
         }
-        this.repository = repository
     }
 
     private fun registerEvents() {
@@ -84,16 +91,37 @@ class Tarot : ModInitializer {
             BankCommand().register(
                 dispatcher
             )
+            registerShinyBoostCommand(dispatcher)
         }
 
         ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->
-            val player = handler.player
-            runBlocking {
-                INSTANCE.repository.readPlayerData(player.uuid)?.let {} ?: INSTANCE.repository.writePlayerData(
-                    player.uuid,
-                    Bank(player.uuid, mutableListOf())
-                )
+            if(ConfigManager.CONFIG.bankEnabled) {
+                val player = handler.player
+                runBlocking {
+                    INSTANCE.repository.readPlayerData(player.uuid)?.let {} ?: INSTANCE.repository.writePlayerData(
+                        player.uuid,
+                        Bank(player.uuid, mutableListOf())
+                    )
+                }
             }
+            ConfigManager.CONFIG.shinyBoosts.forEach { boost ->
+                val playerData = handler.player get TarotDataObject
+                if(playerData.shinyModifiers.none { it.uuid == boost.uuid }) {
+                    playerData.shinyModifiers.add(boost)
+                }
+            }
+        }
+
+        ServerTickEvents.START_SERVER_TICK.register { server ->
+            if(server.overworld() != null) Schedulable.tick(server.overworld())
+            val toRemove = mutableListOf<ShinyModifier>()
+            ConfigManager.CONFIG.shinyBoosts.forEach { boost ->
+                if(boost.endTime < System.currentTimeMillis()) {
+                    toRemove.add(boost)
+                }
+            }
+            ConfigManager.CONFIG.shinyBoosts.removeAll(toRemove)
+            if(toRemove.isNotEmpty()) ConfigManager.saveFile("config.json", ConfigManager.CONFIG)
         }
     }
 

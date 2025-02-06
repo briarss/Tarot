@@ -10,6 +10,7 @@ import aster.amo.tarot.commands.subcommands.BoxReleaseCommand
 import aster.amo.tarot.commands.subcommands.BoxResizeCommand
 import aster.amo.tarot.commands.subcommands.BoxSwapCommand
 import aster.amo.tarot.commands.subcommands.SortBoxCommand
+import aster.amo.tarot.config.ConfigManager
 
 class BoxCommand {
     private val aliases = listOf("box")
