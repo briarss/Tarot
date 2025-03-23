@@ -20,7 +20,7 @@ import net.minecraft.commands.arguments.EntityArgument
 class BoxResizeCommand : SubCommand {
     override fun build(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("resize")
-            .requires(Permissions.require("${Tarot.MOD_ID}.command.box.release", 2))
+            .requires(Permissions.require("${Tarot.MOD_ID}.command.box.resize", 2))
             .then(
                 Commands.argument("player", EntityArgument.players())
                     .then(
